@@ -1,0 +1,105 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this.txt
+pypo_fixers_log.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.py-cov
+sitecustomize.py
+
+# Environments
+.env/
+.venv/
+venv/
+ENV/
+env.bak/
+env.save/
+*.env
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation build
+/site/
+
+# mypy cache
+.mypy_cache/
+.dmypy.json
+dmypy.sock
+
+# pytype cache
+.pytype_cache/
+
+# IPython notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Environments (if you use other virtual environment tools)
+virtualenv/
+envs/
+
+# OS generated files # macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Tooling and IDEs:
+*.orig
+*.rej
+*.diff
+*.patch
+*.backup
+*.swp
+*.vimrc
+*~
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Environment variable files
+.env
