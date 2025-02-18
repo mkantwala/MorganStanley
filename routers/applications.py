@@ -18,32 +18,9 @@ logging.basicConfig(level=logging.INFO)
 
 @router.get("/")
 def list_applications(current_user: TokenData = Depends(get_current_user)):
-
     apps = list(database.USERS[current_user.username])
     return JSONResponse(content=apps)
 
-# @router.post("/")
-# async def create_application(background_tasks: BackgroundTasks,
-#                              current_user: TokenData = Depends(get_current_user),
-#                              name: str = Form(...),
-#                              description: str = Form(...),
-#                              file: UploadFile = File(...)):
-#     logging.info("create_application called")
-#     app_id = str(uuid.uuid4())
-#
-#     database.USERS[current_user.username].add(app_id)
-#
-#     database.APPLICATIONS[app_id] = {
-#         "name": name,
-#         "description": description,
-#         "vulnerabilities": 0,
-#         "dependencies": {},
-#         "status": "processing",
-#     }
-#
-#     background_tasks.add_task(process_file, file, app_id, current_user.username)
-#
-#     return JSONResponse(content={"message": "Application created"})
 @router.post("/")
 async def create_application(background_tasks: BackgroundTasks,
         current_user: TokenData = Depends(get_current_user),
@@ -127,22 +104,17 @@ async def update_application(
     if app_id not in database.USERS[current_user.username]:
         raise HTTPException(status_code=403, detail="Unauthorized: Access is denied")
 
-    application = database.APPLICATIONS[app_id]
-
     # Update name and description if provided
     if name:
-        application["name"] = name
+        database.APPLICATIONS[app_id]["name"] = name
     if description:
-        application["description"] = description
+        database.APPLICATIONS[app_id]["description"] = description
 
     if file:
-        # Change status to "updated"
-        application["status"] = "updated"
+        # Change status to "updating"
+        database.APPLICATIONS[app_id]["status"] = "updating"
         file_content = await file.read()
         background_tasks.add_task(update_file, file_content.decode("utf-8"), app_id, current_user.username)
-
-    # Save the updated application
-    database.APPLICATIONS[app_id] = application
 
     return JSONResponse(content={"message": "Application updated"})
 
