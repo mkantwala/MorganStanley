@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List, Dict, Any
 
 class Token(BaseModel):
     access_token: str
@@ -9,7 +9,6 @@ class VulnerabilityResponse(BaseModel):
     id: str
     summary: str
     details: str
-
 class PackageInfoResponse(BaseModel):
     description: str
     summary: str
