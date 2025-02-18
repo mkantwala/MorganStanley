@@ -62,7 +62,7 @@ async def update_file(file_content: str, app_id: str, username: str):
 
     logging.info(f"Updating file for app_id: {app_id}, user: {username}")
 
-    previous_dependencies = database.APPLICATIONS[app_id]["dependencies"].deepcopy()
+    previous_dependencies = dict(database.APPLICATIONS[app_id]["dependencies"])
 
     lines = file_content.splitlines()
     queries = {}
