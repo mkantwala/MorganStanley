@@ -58,10 +58,10 @@ def get_application(app_id: str, current_user: TokenData = Depends(get_current_u
     if app_id not in database.USERS[current_user.username]:
         raise HTTPException(status_code=403, detail="Unauthorized: Access is denied")
 
-    app_ids = list(database.USERS[current_user.username])
+    # app_ids = list(database.USERS[current_user.username])
     applications = []
 
-    for app_id in app_ids:
+    for app_id in database.USERS[current_user.username]:
         application = database.APPLICATIONS.get(app_id)
         if application:
             applications.append({
@@ -84,8 +84,16 @@ def get_application_dependencies(app_id: str, current_user: TokenData = Depends(
         raise HTTPException(status_code=403, detail="Unauthorized: Access is denied")
 
     dependencies = database.APPLICATIONS[app_id].get("dependencies", {})
+    dependencies_with_vulns = {}
 
-    return JSONResponse(content=dependencies)
+    for dep, version in dependencies.items():
+        vulns = list(database.DEPENDENCIES[dep][version]["vulns"].copy()) if version else []
+        dependencies_with_vulns[dep] = {
+            "version": version,
+            "vulnerabilities": vulns
+        }
+
+    return JSONResponse(content=dependencies_with_vulns)
 
 @router.put("/{app_id}")
 async def update_application(

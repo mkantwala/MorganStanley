@@ -8,6 +8,17 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     JWT_SECRET: str = "morganstanley"
 
+    REDIS_HOST: str = "localhost"
+    REDIS_PORT: int = 6379
+    REDIS_DB: int = 0
+
+    RATE_LIMIT_MAX_REQUESTS: int = 5
+    RATE_LIMIT_WINDOW: int = 60
+
+    CACHE_EXPIRE: int = 3600
+
+
+
 
 
 

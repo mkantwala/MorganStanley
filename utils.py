@@ -1,9 +1,36 @@
 import logging
 import aiohttp
 from databases import database
-from typing import AsyncGenerator
-from collections import OrderedDict
-from fastapi import UploadFile
+from redis_client import redis_client
+from fastapi import HTTPException
+
+async def fetch_vulnerability(vuln_id: str):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"https://api.osv.dev/v1/vulns/{vuln_id}") as response:
+            if response.status == 200:
+                return await response.json()
+            else:
+                raise HTTPException(status_code=response.status, detail="Error fetching vulnerability details")
+
+async def fetch_package_info(package_name: str, version: str) -> tuple:
+    url = f"https://pypi.org/pypi/{package_name}/{version}/json"
+    dependency_info = {}
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status == 200:
+                data = await response.json()
+                dependency_info["description"] = data["info"].get("description", "")
+                dependency_info["summary"] = data["info"].get("summary", "")
+
+    return data["info"].get("description", "Description not available"), data["info"].get("summary", "Summary not available")
+
+async def fetch_vulns(payload: dict) -> dict:
+    async with aiohttp.ClientSession() as session:
+        async with session.post("https://api.osv.dev/v1/querybatch", json=payload) as response:
+            if response.status != 200:
+                raise Exception(f"Error querying OSV API: {response.status}")
+            return await response.json()
 
 async def process_file(file_content: str, app_id: str, username: str):
 
@@ -32,14 +59,14 @@ async def process_file(file_content: str, app_id: str, username: str):
                     database.DEPENDENCIES[package_name][version]["used_by"].add(app_id)
 
     payload = {"queries": list(queries.values())}
-    async def _send_payload():
-        async with aiohttp.ClientSession() as session:
-            async with session.post("https://api.osv.dev/v1/querybatch", json=payload) as response:
-                if response.status != 200:
-                    raise Exception(f"Error querying OSV API: {response.status}")
-                return await response.json()
+    # async def _send_payload():
+    #     async with aiohttp.ClientSession() as session:
+    #         async with session.post("https://api.osv.dev/v1/querybatch", json=payload) as response:
+    #             if response.status != 200:
+    #                 raise Exception(f"Error querying OSV API: {response.status}")
+    #             return await response.json()
 
-    response = await _send_payload()
+    response = await fetch_vulns(payload)
 
     results = response.get("results", [])
     vulns_count = database.APPLICATIONS[app_id]["vulnerabilities"]
@@ -117,14 +144,14 @@ async def update_file(file_content: str, app_id: str, username: str):
 
     payload = {"queries": list(queries.values())}
 
-    async def _send_payload():
-        async with aiohttp.ClientSession() as session:
-            async with session.post("https://api.osv.dev/v1/querybatch", json=payload) as response:
-                if response.status != 200:
-                    raise Exception(f"Error querying OSV API: {response.status}")
-                return await response.json()
+    # async def _send_payload():
+    #     async with aiohttp.ClientSession() as session:
+    #         async with session.post("https://api.osv.dev/v1/querybatch", json=payload) as response:
+    #             if response.status != 200:
+    #                 raise Exception(f"Error querying OSV API: {response.status}")
+    #             return await response.json()
 
-    response = await _send_payload()
+    response = await fetch_vulns(payload)
 
     results = response.get("results", [])
     vulns_count = database.APPLICATIONS[app_id]["vulnerabilities"]
@@ -152,3 +179,14 @@ async def update_file(file_content: str, app_id: str, username: str):
     })
 
     logging.info(f"Updated file for app_id: {app_id}, user: {username}")
+
+
+def check_rate_limit(user: str):
+    RATE_LIMIT_KEY = "rate_limit:{user}"
+    current_requests = redis_client.get(RATE_LIMIT_KEY.format(user=user))
+    if current_requests and int(current_requests) >= database.RATE_LIMIT_MAX_REQUESTS:
+        raise HTTPException(status_code=429, detail="Rate limit exceeded")
+    else:
+        redis_client.incr(database.RATE_LIMIT_KEY.format(user=user))
+        redis_client.expire(database.RATE_LIMIT_KEY.format(user=user), database.RATE_LIMIT_WINDOW)
+
