@@ -16,5 +16,11 @@ class PackageInfoResponse(BaseModel):
 class VulnsResponse(BaseModel):
     results: list
 
+class LoginResponse(BaseModel):
+    message: str
+
+class LogoutResponse(BaseModel):
+    message: str
+
 class TokenData(BaseModel):
     username: Optional[str] = None
