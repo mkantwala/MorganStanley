@@ -4,7 +4,6 @@ import logging
 from core.security import get_current_user, TokenData
 from core.config import settings
 from databases import database
-import aiohttp
 import json
 from utils import check_rate_limit,redis_client,fetch_vulnerability,fetch_package_info
 from g4f.client import Client
@@ -75,8 +74,8 @@ async def get_vulnerability(vuln_id: str, current_user: TokenData = Depends(get_
         return JSONResponse(content=json.loads(cached_data))
     else:
         vulnerability_info = await fetch_vulnerability(vuln_id)
-        redis_client.setex(cache_key, settings.CACHE_EXPIRE, json.dumps(vulnerability_info))  # Cache for 1 hour
-        return JSONResponse(content=vulnerability_info)
+        redis_client.setex(cache_key, settings.CACHE_EXPIRE, vulnerability_info.json())  # Cache for 1 hour
+        return JSONResponse(content=vulnerability_info.dict())
 
 @router.get("/alternate/{package_name}")
 def get_alternate(package_name: str, version: str = Query(...), current_user: TokenData = Depends(get_current_user)):
