@@ -1,19 +1,31 @@
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException, BackgroundTasks, Query, Depends
+from fastapi import APIRouter, HTTPException, Query, Depends
 from fastapi.responses import JSONResponse
 import logging
 from core.security import get_current_user, TokenData
 from core.config import settings
 from databases import database
 import json
-from utils import check_rate_limit,redis_client,fetch_vulnerability,fetch_package_info
+from utils import check_rate_limit, redis_client, fetch_vulnerability, fetch_package_info
 from g4f.client import Client
 from typing import Dict, Any
+
+# Initialize the APIRouter for dependency-related endpoints
 router = APIRouter()
 
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 
 @router.get("/", response_model=Dict[str, Dict[str, Any]])
 async def list_dependencies(current_user: TokenData = Depends(get_current_user)) -> JSONResponse:
+    """
+    List all dependencies for the current user.
+
+    Args:
+        current_user (TokenData): The current authenticated user.
+
+    Returns:
+        JSONResponse: A JSON response containing a dictionary of dependencies.
+    """
     try:
         user_apps = database.USERS.get(current_user.username, set())
         user_dependencies = {}
@@ -38,6 +50,17 @@ async def list_dependencies(current_user: TokenData = Depends(get_current_user))
 
 @router.get("/{package_name}", response_model=Dict[str, Any])
 async def get_dependency(package_name: str, version: str = Query(...), current_user: TokenData = Depends(get_current_user)) -> JSONResponse:
+    """
+    Get details of a specific dependency for the current user.
+
+    Args:
+        package_name (str): The name of the package.
+        version (str): The version of the package.
+        current_user (TokenData): The current authenticated user.
+
+    Returns:
+        JSONResponse: A JSON response containing dependency details.
+    """
     try:
         user_apps = database.USERS.get(current_user.username, set())
 
@@ -67,9 +90,18 @@ async def get_dependency(package_name: str, version: str = Query(...), current_u
         logging.error(f"Error fetching dependency {package_name} version {version}: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-
 @router.get("/vulns/{vuln_id}", response_model=Dict[str, Any])
 async def get_vulnerability(vuln_id: str, current_user: TokenData = Depends(get_current_user)) -> JSONResponse:
+    """
+    Get details of a specific vulnerability.
+
+    Args:
+        vuln_id (str): The ID of the vulnerability.
+        current_user (TokenData): The current authenticated user.
+
+    Returns:
+        JSONResponse: A JSON response containing vulnerability details.
+    """
     try:
         cache_key = f"cache_vuln:{vuln_id}"
         cached_data = redis_client.get(cache_key)
@@ -89,6 +121,17 @@ async def get_vulnerability(vuln_id: str, current_user: TokenData = Depends(get_
 
 @router.get("/alternate/{package_name}", response_model=Dict[str, Any])
 async def get_alternate(package_name: str, version: str = Query(...), current_user: TokenData = Depends(get_current_user)) -> JSONResponse:
+    """
+    Get alternative libraries for a specific package.
+
+    Args:
+        package_name (str): The name of the package.
+        version (str): The version of the package.
+        current_user (TokenData): The current authenticated user.
+
+    Returns:
+        JSONResponse: A JSON response containing a message with alternative libraries.
+    """
     try:
         check_rate_limit("alternate:" + current_user.username)
 

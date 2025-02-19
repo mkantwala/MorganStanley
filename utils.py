@@ -5,9 +5,18 @@ from core.config import settings
 from redis_client import redis_client
 from fastapi import HTTPException
 from models import VulnerabilityResponse, PackageInfoResponse, VulnsResponse
-from typing import Dict, Any, Tuple
+from typing import Dict, Any
 
 async def fetch_vulnerability(vuln_id: str) -> VulnerabilityResponse:
+    """
+    Fetch vulnerability details from the OSV API.
+
+    Args:
+        vuln_id (str): The ID of the vulnerability.
+
+    Returns:
+        VulnerabilityResponse: The response containing vulnerability details.
+    """
     logging.info(f"Fetching vulnerability details for ID: {vuln_id}")
     async with aiohttp.ClientSession() as session:
         async with session.get(f"https://api.osv.dev/v1/vulns/{vuln_id}") as response:
@@ -19,6 +28,16 @@ async def fetch_vulnerability(vuln_id: str) -> VulnerabilityResponse:
                 raise HTTPException(status_code=response.status, detail="Error fetching vulnerability details")
 
 async def fetch_package_info(package_name: str, version: str) -> PackageInfoResponse:
+    """
+    Fetch package information from the PyPI API.
+
+    Args:
+        package_name (str): The name of the package.
+        version (str): The version of the package.
+
+    Returns:
+        PackageInfoResponse: The response containing package information.
+    """
     url = f"https://pypi.org/pypi/{package_name}/{version}/json"
     logging.info(f"Fetching package info for {package_name} version {version}")
 
@@ -36,6 +55,15 @@ async def fetch_package_info(package_name: str, version: str) -> PackageInfoResp
                 raise HTTPException(status_code=response.status, detail="Error fetching package info")
 
 async def fetch_vulns(payload: Dict[str, Any]) -> VulnsResponse:
+    """
+    Fetch vulnerabilities for the given payload from the OSV API.
+
+    Args:
+        payload (Dict[str, Any]): The payload containing package queries.
+
+    Returns:
+        VulnsResponse: The response containing vulnerabilities.
+    """
     logging.info("Fetching vulnerabilities for the given payload")
     async with aiohttp.ClientSession() as session:
         async with session.post("https://api.osv.dev/v1/querybatch", json=payload) as response:
@@ -47,6 +75,14 @@ async def fetch_vulns(payload: Dict[str, Any]) -> VulnsResponse:
                 raise HTTPException(status_code=response.status, detail="Error querying OSV API")
 
 async def process_file(file_content: str, app_id: str, username: str) -> None:
+    """
+    Process the uploaded file to extract dependencies and fetch vulnerabilities.
+
+    Args:
+        file_content (str): The content of the uploaded file.
+        app_id (str): The ID of the application.
+        username (str): The username of the user.
+    """
     logging.info(f"Processing file for app_id: {app_id}, user: {username}")
 
     lines = file_content.splitlines()
@@ -54,14 +90,11 @@ async def process_file(file_content: str, app_id: str, username: str) -> None:
     user = {}
 
     for line in lines:
-
         line = line.strip()
         if not line or line.startswith("#"):
             continue
 
-
         if "==" in line:
-
             parts = line.split("==", 1)
             if len(parts) < 2:
                 continue  # malformed line, skip
@@ -73,7 +106,6 @@ async def process_file(file_content: str, app_id: str, username: str) -> None:
             else:
                 version = version.split()[0].strip()
 
-            # package_name, version = line.split("==")
             user[package_name] = version
 
             if package_name not in database.DEPENDENCIES:
@@ -107,6 +139,14 @@ async def process_file(file_content: str, app_id: str, username: str) -> None:
     logging.info(f"Processed file for app_id: {app_id}, user: {username}")
 
 async def update_file(file_content: str, app_id: str, username: str) -> None:
+    """
+    Update the dependencies of an application based on the uploaded file.
+
+    Args:
+        file_content (str): The content of the uploaded file.
+        app_id (str): The ID of the application.
+        username (str): The username of the user.
+    """
     logging.info(f"Updating file for app_id: {app_id}, user: {username}")
 
     previous_dependencies = dict(database.APPLICATIONS[app_id]["dependencies"])
@@ -116,13 +156,11 @@ async def update_file(file_content: str, app_id: str, username: str) -> None:
     user = {}
 
     for line in lines:
-
         line = line.strip()
         if not line or line.startswith("#"):
             continue
 
         if "==" in line:
-
             parts = line.split("==", 1)
             if len(parts) < 2:
                 continue  # malformed line, skip
@@ -134,7 +172,6 @@ async def update_file(file_content: str, app_id: str, username: str) -> None:
             else:
                 version = version.split()[0].strip()
 
-            # package_name, version = line.split("==")
             user[package_name] = version
 
             if package_name in previous_dependencies:
@@ -193,6 +230,15 @@ async def update_file(file_content: str, app_id: str, username: str) -> None:
     logging.info(f"Updated file for app_id: {app_id}, user: {username}")
 
 def check_rate_limit(user: str) -> None:
+    """
+    Check if the user has exceeded the rate limit for requests.
+
+    Args:
+        user (str): The username of the user.
+
+    Raises:
+        HTTPException: If the rate limit is exceeded.
+    """
     RATE_LIMIT_KEY = f"rate_limit:{user}"
     current_requests = redis_client.get(RATE_LIMIT_KEY)
 

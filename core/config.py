@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
+    """    Settings class to hold configuration values for the application. """
 
     PROJECT_NAME: str = "Morgan Stanley Vulnerability Scanner"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 10
@@ -17,9 +18,5 @@ class Settings(BaseSettings):
 
     CACHE_EXPIRE: int = 3600
 
-
-
-
-
-
+# Instantiate the settings object
 settings = Settings()
