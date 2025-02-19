@@ -20,8 +20,8 @@ class VulnerabilityResponse(BaseModel):
         details (str): Detailed information about the vulnerability.
     """
     id: str
-    summary: str
-    details: str
+    summary: Optional[str] = None
+    details : Optional[str] = None
 
 class PackageInfoResponse(BaseModel):
     """
