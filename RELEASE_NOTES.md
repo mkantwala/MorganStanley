@@ -4,7 +4,7 @@ This document outlines the release history for the [**MorganStanley**](https://g
 
 -----
 
-### v0.1.1 <img src="[https://img.shields.io/badge/Version-0.1.1-blue](https://img.shields.io/badge/Version-0.1.1-blue)" alt="Version 0.1.1 Badge"> <Badge type="info">Latest</Badge>
+### v0.1.1 <img src="https://img.shields.io/badge/Version-0.1.1-blue" alt="Version 0.1.1 Badge"> <Badge type="info">Latest</Badge>
 
 **Enhancements:**
 
@@ -16,7 +16,7 @@ This document outlines the release history for the [**MorganStanley**](https://g
 
 -----
 
-### v0.1.0 <img src="[https://img.shields.io/badge/Version-0.1.0-blue](https://img.shields.io/badge/Version-0.1.0-blue)" alt="Version 0.1.0 Badge"> - [`28c1b87cbf46bb8ca4a945659e52840d73fb883c`]([https://www.google.com/url?sa=E&source=gmail&q=https://github.com/mkantwala/MorganStanley.git/commit/28c1b87cbf46bb8ca4a945659e52840d73fb883c](https://www.google.com/url?sa=E&source=gmail&q=https://github.com/mkantwala/MorganStanley.git/commit/28c1b87cbf46bb8ca4a945659e52840d73fb883c))
+### v0.1.0 <img src="https://img.shields.io/badge/Version-0.1.0-blue" alt="Version 0.1.0 Badge"> - [`28c1b87cbf46bb8ca4a945659e52840d73fb883c`]([https://www.google.com/url?sa=E&source=gmail&q=https://github.com/mkantwala/MorganStanley.git/commit/28c1b87cbf46bb8ca4a945659e52840d73fb883c](https://www.google.com/url?sa=E&source=gmail&q=https://github.com/mkantwala/MorganStanley.git/commit/28c1b87cbf46bb8ca4a945659e52840d73fb883c))
 
 **Key Features:**
 
@@ -31,7 +31,7 @@ This document outlines the release history for the [**MorganStanley**](https://g
 
 -----
 
-### v0.0.3 <img src="[https://img.shields.io/badge/Version-0.0.3-blue](https://img.shields.io/badge/Version-0.0.3-blue)" alt="Version 0.0.3 Badge">
+### v0.0.3 <img src="https://img.shields.io/badge/Version-0.0.3-blue" alt="Version 0.0.3 Badge">
 
 **Bug Fixes:**
 
@@ -49,7 +49,7 @@ This document outlines the release history for the [**MorganStanley**](https://g
 
 -----
 
-### v0.0.2 <img src="[https://img.shields.io/badge/Version-0.0.2-blue](https://img.shields.io/badge/Version-0.0.2-blue)" alt="Version 0.0.2 Badge"> - [`b2fdef28826c928153854389eff27ccaad801ef0`]([https://www.google.com/url?sa=E&source=gmail&q=https://github.com/mkantwala/MorganStanley.git/commit/b2fdef28826c928153854389eff27ccaad801ef0](https://www.google.com/url?sa=E&source=gmail&q=https://github.com/mkantwala/MorganStanley.git/commit/b2fdef28826c928153854389eff27ccaad801ef0))
+### v0.0.2 <img src="https://img.shields.io/badge/Version-0.0.2-blue" alt="Version 0.0.2 Badge"> - [`b2fdef28826c928153854389eff27ccaad801ef0`]([https://www.google.com/url?sa=E&source=gmail&q=https://github.com/mkantwala/MorganStanley.git/commit/b2fdef28826c928153854389eff27ccaad801ef0](https://www.google.com/url?sa=E&source=gmail&q=https://github.com/mkantwala/MorganStanley.git/commit/b2fdef28826c928153854389eff27ccaad801ef0))
 
 **Bug Fixes:**
 
@@ -62,7 +62,7 @@ This document outlines the release history for the [**MorganStanley**](https://g
 
 -----
 
-### v0.0.1 <img src="[https://img.shields.io/badge/Version-0.0.1-blue](https://img.shields.io/badge/Version-0.0.1-blue)" alt="Version 0.0.1 Badge"> - [`a3a70b456f331c5c87ff383d0647d61d4bfceb5d`]([https://www.google.com/url?sa=E&source=gmail&q=https://github.com/mkantwala/MorganStanley.git/commit/a3a70b456f331c5c87ff383d0647d61d4bfceb5d](https://www.google.com/url?sa=E&source=gmail&q=https://github.com/mkantwala/MorganStanley.git/commit/a3a70b456f331c5c87ff383d0647d61d4bfceb5d))
+### v0.0.1 <img src="https://img.shields.io/badge/Version-0.0.1-blue" alt="Version 0.0.1 Badge"> - [`a3a70b456f331c5c87ff383d0647d61d4bfceb5d`]([https://www.google.com/url?sa=E&source=gmail&q=https://github.com/mkantwala/MorganStanley.git/commit/a3a70b456f331c5c87ff383d0647d61d4bfceb5d](https://www.google.com/url?sa=E&source=gmail&q=https://github.com/mkantwala/MorganStanley.git/commit/a3a70b456f331c5c87ff383d0647d61d4bfceb5d))
 
 **Initial Release:**
 
