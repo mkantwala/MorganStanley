@@ -1,9 +1,22 @@
 from fastapi import FastAPI
 from routers import applications, auth, dependencies
 from databases import database
+from fastapi.middleware.cors import CORSMiddleware
+
+
 
 # Initialize FastAPI app
 app = FastAPI(title="Vulnerability Tracker API")
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # Include routers for different endpoints
 app.include_router(applications.router, prefix="/applications", tags=["Applications"])

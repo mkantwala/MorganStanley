@@ -23,11 +23,23 @@ async def list_applications(current_user: TokenData = Depends(get_current_user))
         current_user (TokenData): The current authenticated user.
 
     Returns:
-        JSONResponse: A JSON response containing a list of application IDs.
+        JSONResponse: A JSON response containing a list of application.
     """
     try:
-        apps = list(database.USERS[current_user.username])
-        return JSONResponse(content=apps)
+        # apps = list(database.USERS[current_user.username])
+        applications =[]
+        for app_id in database.USERS[current_user.username]:
+            application = database.APPLICATIONS.get(app_id)
+            if application:
+                applications.append({
+                    "id": app_id,
+                    "name": application["name"],
+                    "description": application["description"],
+                    "status": application["status"],
+                    "vulnerabilities": application["vulnerabilities"]
+                })
+
+        return JSONResponse(content=applications)
     except Exception as e:
         logging.error(f"Error listing applications: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
@@ -38,7 +50,7 @@ async def create_application(
     current_user: TokenData = Depends(get_current_user),
     name: str = Form(...),
     description: str = Form(...),
-    file: UploadFile = File(...),
+    file: UploadFile = File(..., media_type="text/plain"),
 ) -> JSONResponse:
     """
     Create a new application for the current user.
@@ -96,16 +108,16 @@ async def get_application(app_id: str, current_user: TokenData = Depends(get_cur
             raise HTTPException(status_code=403, detail="Unauthorized: Access is denied")
 
         applications = []
-        for app_id in database.USERS[current_user.username]:
-            application = database.APPLICATIONS.get(app_id)
-            if application:
-                applications.append({
-                    "id": app_id,
-                    "name": application["name"],
-                    "description": application["description"],
-                    "status": application["status"],
-                    "vulnerabilities": application["vulnerabilities"]
-                })
+        # for app_id in database.USERS[current_user.username]:
+        application = database.APPLICATIONS.get(app_id)
+        if application:
+            applications.append({
+                "id": app_id,
+                "name": application["name"],
+                "description": application["description"],
+                "status": application["status"],
+                "vulnerabilities": application["vulnerabilities"]
+            })
 
         return JSONResponse(content=applications)
     except Exception as e:

@@ -87,7 +87,7 @@ Get started with the Vulnerability Tracker API in a few simple steps:
 
 ## Documentation
 
-[//]: # (*   [Detailed Documentation]&#40;docs/detailed_usage.md&#41;)
+*   [Detailed Documentation](docs/detailed_usage.md)
 *   [API Reference](docs/api-reference.md)
 *   [Release Notes](RELEASE_NOTES.md)
 
