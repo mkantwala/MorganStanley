@@ -17,6 +17,7 @@ async def fetch_vulnerability(vuln_id: str) -> VulnerabilityResponse:
             else:
                 logging.error(f"Error fetching vulnerability details for ID: {vuln_id}, Status code: {response.status}")
                 raise HTTPException(status_code=response.status, detail="Error fetching vulnerability details")
+
 async def fetch_package_info(package_name: str, version: str) -> PackageInfoResponse:
     url = f"https://pypi.org/pypi/{package_name}/{version}/json"
     logging.info(f"Fetching package info for {package_name} version {version}")
@@ -44,6 +45,7 @@ async def fetch_vulns(payload: Dict[str, Any]) -> VulnsResponse:
             else:
                 logging.error(f"Error querying OSV API, Status code: {response.status}")
                 raise HTTPException(status_code=response.status, detail="Error querying OSV API")
+
 async def process_file(file_content: str, app_id: str, username: str) -> None:
     logging.info(f"Processing file for app_id: {app_id}, user: {username}")
 
@@ -52,8 +54,26 @@ async def process_file(file_content: str, app_id: str, username: str) -> None:
     user = {}
 
     for line in lines:
+
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+
+
         if "==" in line:
-            package_name, version = line.split("==")
+
+            parts = line.split("==", 1)
+            if len(parts) < 2:
+                continue  # malformed line, skip
+            package_name = parts[0].strip()
+            version = parts[1].strip()
+
+            if ";" in version:
+                version = version.split(";", 1)[0].strip()
+            else:
+                version = version.split()[0].strip()
+
+            # package_name, version = line.split("==")
             user[package_name] = version
 
             if package_name not in database.DEPENDENCIES:
@@ -96,8 +116,25 @@ async def update_file(file_content: str, app_id: str, username: str) -> None:
     user = {}
 
     for line in lines:
+
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+
         if "==" in line:
-            package_name, version = line.split("==")
+
+            parts = line.split("==", 1)
+            if len(parts) < 2:
+                continue  # malformed line, skip
+            package_name = parts[0].strip()
+            version = parts[1].strip()
+
+            if ";" in version:
+                version = version.split(";", 1)[0].strip()
+            else:
+                version = version.split()[0].strip()
+
+            # package_name, version = line.split("==")
             user[package_name] = version
 
             if package_name in previous_dependencies:
